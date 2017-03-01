@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Three in row</title>
+	<link rel="stylesheet" href="css/styles.css" type="text/css" media="screen">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+	<div class="ui" id="ui">
+		<h1>Three in row</h1>
+		<p id="score">Score: <span class="score">0</span></p>
+	</div>
+
+	<div class="message">
+		<h2>Choose game field size</h2>
+		<ul>
+			<!--First button only for debugging-->
+			<li><button class="four" value="2">2*2</button></li>
+
+			<!--Production buttons-->
+			<li><button class="four" value="4">4*4</button></li>
+			<li><button class="six" value="6">6*6</button></li>
+		</ul>
+	</div>
+
+	<div id="game"></div>
+
+	<footer class="footer">
+		<p>Three in row. 2017</p>
+	</footer>
+	<script src="js/game.js"></script>
+</body>
+</html>
