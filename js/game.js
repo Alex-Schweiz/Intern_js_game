@@ -16,9 +16,9 @@ var Game = function () {
         this.populateLevel();
         this.drawNewLevel();
 
-        this.checkLines();
+        setTimeout(this.checkLines(), 1000);
 
-        //setTimeout(this.checkLines, 100);
+        setTimeout(this.checkLines, 100);
     };
 
     this.releaseGameControl = function(play) {
@@ -82,20 +82,20 @@ var Game = function () {
 
     this.checkLines = function (size) {
 
-        console.log('Hallo from CHECK Lines');
+        //console.log('Hallo from CHECK Lines');
 
         var k = 0,
             counter = 0,
             size = this.size;
 
-        console.log('Hallo from CHECK Lines | This Size' + size);
+        //console.log('Hallo from CHECK Lines | This Size' + size);
 
         (function () {
             var reset = document.getElementsByClassName("row");
             for (var i=0 ; i < reset.length ; i++){
                 reset[i].classList.remove("glow");
             }
-            console.log('Hallo from Class Glow removed');
+            //console.log('Hallo from Class Glow removed');
         })();
 
 
@@ -165,22 +165,66 @@ var Game = function () {
 
         targetGem = this.gameField.querySelectorAll(".row[data-id=" + "\'" + position + "\'" + "]");
 
-        (function () {
+
 
             for (var i=0; i < targetGem.length;i++){
                 targetGem[i].setAttribute("data-id", false);
+
+                console.log(' TARGET GEM |||| ' + targetGem[i]);
+                console.log(' TARGET GEM || WIDTH ' + targetGem[i].style.width);
+
+                var gem =  targetGem[i];
+                var start = Date.now();
+                var timer = setInterval(function() {
+
+                    console.log(' TARGET GEM | INSIDE INTERVAL |      ========');
+
+                    var timePassed = Date.now() - start;
+
+                    if (timePassed >= 500) {
+                        clearInterval(timer);
+                        return;
+                    }
+
+                    console.log(' TIME PASSED ' + timePassed);
+                    console.log(' ');
+                    console.log(' TARGET GEM | INSIDE INTERVAL| WIDTH ' + gem.style.width);
+
+                    gem.style.marginTop = gem.style.marginLeft = timePassed/20 * difference/25 + 'px';
+                    gem.style.height = 125 - timePassed/20 * 5 + 'px';
+                    gem.style.width = 125 - timePassed/20 * 5 + 'px' ;
+
+                    /*console.log('==========');
+                    console.log(' ');
+
+                    console.log(' ||| GEM MARGIN TOP ' + gem.style.marginTop);
+                    console.log(' ||| GEM MARGIN Left ' + gem.style.marginLeft);
+                    console.log(' ||| GEM HEIGHT ' + gem.style.height);
+                    console.log(' ||| GEM width ' + gem.style.width);
+
+                    console.log('==========');*/
+
+                }, 20);
+
+                setTimeout(function () {
+                    gem.parentNode.removeChild(gem);
+                    console.log('INSIDE A CALLBACK');
+                }, 505);
+
+
                 //targetGem[i].style.WebkitAnimationDuration = "4s";
 
                 /*targetGem[i].style.marginTop = targetGem[i].style.marginLeft = difference;
-                targetGem[i].style.height = 0;
-                targetGem[i].style.width = 0;*/
-                targetGem[i].parentNode.removeChild(targetGem[i]);
+                */
+                //
 
-                that.scoreUpdate(10);
+
                 //targetGem[i].style.display = 'none';
             }
 
-        })();
+            that.scoreUpdate(10);
+            console.log('SCORE ADDED');
+
 
         if (that.fillEnd) {
             that.fillHoles();
@@ -212,7 +256,7 @@ var Game = function () {
             var colPosition = under - Math.floor(linePosition * this.originalSize);
 
 
-            console.log('=======================');
+            /*console.log('=======================');
             //console.log('Hallo FROM FILL HOLES | ORIGINAL SIZE = ' + this.originalSize);
             console.log('Hallo FROM FILL HOLES | VAR UNDER = ' + under);
             console.log('Hallo FROM FILL HOLES | LINE POSITION = ' + linePosition);
@@ -220,7 +264,7 @@ var Game = function () {
             console.log('Hallo FROM FILL HOLES | THIS LEVEL UNDER = ' + this.level[under]);
 
             console.log('');
-            console.log('=======================');
+            console.log('=======================');*/
 
             if (this.level[under] === 0 && this.level[i] !== 0 ){
 
@@ -262,13 +306,53 @@ var Game = function () {
 
         var that = this;
 
-        console.log('THIS GAME FIELD FIND ===  ' + this.gameField.querySelectorAll(".row[data-id=" + "\'" + position + "\'" + "]"));
+        //console.log('THIS GAME FIELD FIND ===  ' + this.gameField.querySelectorAll(".row[data-id=" + "\'" + position + "\'" + "]"));
 
         var currentGem = this.gameField.querySelector(".row[data-id=" + "\'" + position + "\'" + "]");
 
+        var currentTop = currentGem.style.top;
+        console.log('=== OLD STYLE TOP === ' + currentTop);
+
         currentGem.style.top = Math.abs(line * that.caseHeight) + 'px';
 
-        console.log('Hallo FROM THIS MOVE GEMS |||| STYLE TOP ' + currentGem.style.top);
+        //Try to animate falling
+
+        /*var start = Date.now();
+        var timerMove = setInterval(function() {
+
+            console.log(' MOVE GEMS| INSIDE INTERVAL |  CURRENT TOP    ====  ' + currentTop);
+
+            var timePassed = Date.now() - start;
+
+            console.log(' TIME PASSED  == ' + timePassed);
+
+            if (timePassed >= 500) {
+                clearInterval(timerMove);
+                return;
+            }
+
+            currentGem.style.top = Math.abs(line * that.caseHeight) + 'px';
+
+            //currentGem.style.top = Math.abs(currentTop + timePassed/20 * that.caseHeight/25) + 'px';
+
+            /!*console.log('==========');
+             console.log(' ');
+
+             console.log(' ||| GEM MARGIN TOP ' + gem.style.marginTop);
+             console.log(' ||| GEM MARGIN Left ' + gem.style.marginLeft);
+             console.log(' ||| GEM HEIGHT ' + gem.style.height);
+             console.log(' ||| GEM width ' + gem.style.width);
+
+             console.log('==========');*!/
+
+        }, 20);*/
+
+
+
+
+        //console.log('Hallo FROM THIS MOVE GEMS |||| STYLE TOP ' + currentGem.style.top);
+
+        //console.log('=== NEW STYLE TOP === ' + currentGem.style.top);
 
 
         currentGem.setAttribute("data-id", destination);
@@ -287,29 +371,29 @@ var Game = function () {
         var that = this;
         var gem = document.createElement('div');
 
-        console.log('KIND OF CREATED ELEMENT' + gem);
+        //console.log('KIND OF CREATED ELEMENT' + gem);
 
         this.level[colPosition] = Math.round(Math.random() * this.typesOfGems +1);
 
         gem.className = "type-" + this.level[colPosition] + " row";
 
-        console.log('ADD CLASS to ' + gem.className);
+        /*console.log('ADD CLASS to ' + gem.className);
         console.log('NEW GEM ' + gem);
 
         console.log('NEW GEM | this.caseHeight == ' + this.caseHeight);
-        console.log('NEW GEM | colPosition == ' + colPosition);
+        console.log('NEW GEM | colPosition == ' + colPosition);*/
 
 
         gem.style.top = -this.caseHeight + 'px';
         gem.style.left = colPosition * this.caseHeight + 'px';
-        gem.style.width = gem.style.height = this.caseHeight + 15 + 'px';
+        gem.style.width = gem.style.height = this.caseHeight + 'px';
         gem.style.opacity = 0;
         gem.setAttribute("data-id", colPosition);
 
         this.gameField.appendChild(gem);
 
         gem.style.top = 0 + 'px';
-        gem.style.opacity = 0.15;
+        gem.style.opacity = 0.2;
 
     };
 
