@@ -1,9 +1,11 @@
 var newGame;
 var Game = function () {
 
+    var callCheckLines;
     this.init = function (size, gameField, scoreField) {
         console.log('Inside a Game');
 
+        these = this;
         this.gameField = gameField;
         this.level = [];
         this.typesOfGems = 5;
@@ -18,7 +20,77 @@ var Game = function () {
 
         setTimeout(this.checkLines(), 1000);
 
-        setTimeout(this.checkLines, 100);
+
+        // Experiment Drag option
+        var dragSrcEl;
+
+        function handleDragStart(e) {
+            this.style.opacity = '0.9';
+
+            dragSrcEl = this;
+
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.className);
+            //e.dataTransfer.setData('data-id', this.getAttribute("data-id"));
+        }
+
+        function handleDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            e.dataTransfer.dropEffect = 'move';
+
+            return false;
+        }
+        function handleDragEnter(e) {
+            this.classList.add('over');
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('over');
+        }
+
+        function handleDrop(e) {
+
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+
+            if (dragSrcEl != this) {
+                // Set the source column's HTML to the HTML of the columnwe dropped on.
+                dragSrcEl.className = this.className;
+                //dragSrcEl.level = this.level;
+
+                console.log('HANDLE DROP ENVOKES');
+                this.className = e.dataTransfer.getData('text/html');
+                //this.level = e.dataTransfer.getData('level');
+                setTimeout(these.checkLines(), 100);
+            }
+
+            return false;
+        }
+
+        function handleDragEnd(e) {
+            [].forEach.call(cols, function (col) {
+                col.classList.remove('over');
+            });
+        }
+
+        var cols = document.querySelectorAll(".row");
+        [].forEach.call(cols, function(col) {
+            col.addEventListener('dragstart', handleDragStart, false);
+            col.addEventListener('dragenter', handleDragEnter, false);
+            col.addEventListener('dragover', handleDragOver, false);
+            col.addEventListener('dragleave', handleDragLeave, false);
+            col.addEventListener('drop', handleDrop, false);
+            col.addEventListener('dragend', handleDragEnd, false);
+            col.setAttribute("draggable", true);
+        });
+
+
+
+
+        //setTimeout(this.checkLines, 100);
     };
 
     this.releaseGameControl = function(play) {
@@ -65,6 +137,7 @@ var Game = function () {
 
             row.setAttribute("class", 'type-' + this.level[i] + ' row');
             row.setAttribute("data-id", i);
+            //row.setAttribute("draggable", true);
 
             this.gameField.appendChild(row.cloneNode(true));
 
@@ -82,7 +155,7 @@ var Game = function () {
 
     this.checkLines = function (size) {
 
-        //console.log('Hallo from CHECK Lines');
+        console.log('Hallo from CHECK Lines');
 
         var k = 0,
             counter = 0,
@@ -102,6 +175,8 @@ var Game = function () {
 
         for (; k < size; k++){
             counter = counter + this.checkGemAround(this.level[k], k);
+            console.log('This level[k]  === ' + this.level[k])
+            console.log('This level K  === ' + k)
         }
 
         /*if (counter === this.size){
@@ -124,12 +199,14 @@ var Game = function () {
         {
             this.removeClearedGemToLevel([position, position - 1, position + 1]);
         } else {
+            console.log('Hallo FROM ELSE ===');
             flag = true;
         }
 
         if ( this.level[position - this.itemByLine] === gemType && this.level[position + this.itemByLine] === gemType) {
             this.removeClearedGemToLevel([position - this.itemByLine, position, position + this.itemByLine]);
         } else {
+            console.log('Hallo FROM SECOND ELSE ===');
             flag = true;
         }
 
@@ -170,14 +247,14 @@ var Game = function () {
             for (var i=0; i < targetGem.length;i++){
                 targetGem[i].setAttribute("data-id", false);
 
-                console.log(' TARGET GEM |||| ' + targetGem[i]);
-                console.log(' TARGET GEM || WIDTH ' + targetGem[i].style.width);
+                /*console.log(' TARGET GEM |||| ' + targetGem[i]);
+                console.log(' TARGET GEM || WIDTH ' + targetGem[i].style.width);*/
 
                 var gem =  targetGem[i];
                 var start = Date.now();
                 var timer = setInterval(function() {
 
-                    console.log(' TARGET GEM | INSIDE INTERVAL |      ========');
+                    //console.log(' TARGET GEM | INSIDE INTERVAL |      ========');
 
                     var timePassed = Date.now() - start;
 
@@ -186,9 +263,9 @@ var Game = function () {
                         return;
                     }
 
-                    console.log(' TIME PASSED ' + timePassed);
+                    /*console.log(' TIME PASSED ' + timePassed);
                     console.log(' ');
-                    console.log(' TARGET GEM | INSIDE INTERVAL| WIDTH ' + gem.style.width);
+                    console.log(' TARGET GEM | INSIDE INTERVAL| WIDTH ' + gem.style.width);*/
 
                     gem.style.marginTop = gem.style.marginLeft = timePassed/20 * difference/25 + 'px';
                     gem.style.height = 125 - timePassed/20 * 5 + 'px';
@@ -209,7 +286,7 @@ var Game = function () {
                 setTimeout(function () {
                     gem.parentNode.removeChild(gem);
                     console.log('INSIDE A CALLBACK');
-                }, 505);
+                }, 504);
 
 
                 //targetGem[i].style.WebkitAnimationDuration = "4s";
@@ -323,7 +400,7 @@ var Game = function () {
 
         setTimeout( function(){
             return currentGem.style.top = Math.abs(line * that.caseHeight) - 100 + 'px';
-        }, 80);
+        }, 120);
 
         setTimeout( function(){
             return currentGem.style.top = Math.abs(line * that.caseHeight) - 70 + 'px';
@@ -331,7 +408,7 @@ var Game = function () {
 
         setTimeout( function(){
             return currentGem.style.top = Math.abs(line * that.caseHeight) - 40 + 'px';
-        }, 100);
+        }, 200);
 
         setTimeout( function(){
             return currentGem.style.top = Math.abs(line * that.caseHeight) + 'px';

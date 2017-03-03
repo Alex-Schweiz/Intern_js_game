@@ -53,6 +53,10 @@ body {
 	 cursor: pointer;
  }
 
+.over {
+	border: 2px dashed #000;
+}
+
 .footer {
 	text-align: center;
 	font-size: 12px;
