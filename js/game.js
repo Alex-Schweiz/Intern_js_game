@@ -313,7 +313,29 @@ var Game = function () {
         var currentTop = currentGem.style.top;
         console.log('=== OLD STYLE TOP === ' + currentTop);
 
-        currentGem.style.top = Math.abs(line * that.caseHeight) + 'px';
+
+        //Working gems appear
+        //currentGem.style.top = Math.abs(line * that.caseHeight) + 'px';
+
+        setTimeout( function(){
+            return currentGem.style.top = Math.abs(line * that.caseHeight) - 125 + 'px';
+        }, 50);
+
+        setTimeout( function(){
+            return currentGem.style.top = Math.abs(line * that.caseHeight) - 100 + 'px';
+        }, 80);
+
+        setTimeout( function(){
+            return currentGem.style.top = Math.abs(line * that.caseHeight) - 70 + 'px';
+        }, 180);
+
+        setTimeout( function(){
+            return currentGem.style.top = Math.abs(line * that.caseHeight) - 40 + 'px';
+        }, 100);
+
+        setTimeout( function(){
+            return currentGem.style.top = Math.abs(line * that.caseHeight) + 'px';
+        }, 200);
 
         //Try to animate falling
 
@@ -346,8 +368,6 @@ var Game = function () {
              console.log('==========');*!/
 
         }, 20);*/
-
-
 
 
         //console.log('Hallo FROM THIS MOVE GEMS |||| STYLE TOP ' + currentGem.style.top);
