@@ -28,7 +28,8 @@ body {
 	background: rgba(0,0,0,0.20);
 	border-radius: 10px;
 	padding: 10px;
-	margin: 0 auto;
+	float: left;
+	margin: 0 100px auto;
 	font-size: 2em;
 	line-height: 1;
 	width: 230px;
@@ -38,6 +39,19 @@ body {
 .ui p span {
 	font-weight: bold;
 }
+
+ .button {
+	 background-color: darkred;
+	 border-radius: 10px;
+	 color: white;
+	 padding: 15px 32px;
+	 text-align: center;
+	 float: right;
+	 text-decoration: none;
+	 font-size: 16px;
+	 margin-right: 80px;
+	 cursor: pointer;
+ }
 
 .footer {
 	text-align: center;
