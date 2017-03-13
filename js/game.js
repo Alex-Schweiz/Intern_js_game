@@ -1,9 +1,9 @@
 var newGame;
 var Game = function () {
 
-    var callCheckLines;
+    //var callCheckLines;
     this.init = function (size, gameField, scoreField) {
-        console.log('Inside a Game');
+        //console.log('Inside a Game');
 
         these = this;
         this.gameField = gameField;
@@ -18,19 +18,34 @@ var Game = function () {
         this.populateLevel();
         this.drawNewLevel();
 
-        setTimeout(this.checkLines(), 1000);
+        this.dragOption();
+
+        setTimeout(this.checkLines(), 500);
 
 
+        //setTimeout(this.checkLines, 100);
+    };
+
+
+    this.dragOption = function() {
         // Experiment Drag option
         var dragSrcEl;
 
         function handleDragStart(e) {
             this.style.opacity = '0.9';
+            //console.log('==============================');
+            // console.log('THIS LEVEL |||| ' + this.level[position]);
 
             dragSrcEl = this;
 
             e.dataTransfer.effectAllowed = 'move';
             e.dataTransfer.setData('text/html', this.className);
+            e.dataTransfer.setData('level', this.level);
+            e.dataTransfer.setData('dataID', this.getAttribute('data-id'));
+
+            //e.dataTransfer.setData('top', this.style.top);
+            //e.dataTransfer.setData('left', this.style.left);
+
             //e.dataTransfer.setData('data-id', this.getAttribute("data-id"));
         }
 
@@ -60,12 +75,32 @@ var Game = function () {
                 // Set the source column's HTML to the HTML of the columnwe dropped on.
                 dragSrcEl.className = this.className;
                 //dragSrcEl.level = this.level;
+                var draggableOrderNumber = dragSrcEl.getAttribute('data-id');
+                var droppableOrderNumber = this.getAttribute('data-id');
 
-                console.log('HANDLE DROP ENVOKES');
+                var draggableValue = these.level[draggableOrderNumber];
+                var droppableValue = these.level[droppableOrderNumber];
+
+                these.level[draggableOrderNumber] = droppableValue;
+                these.level[droppableOrderNumber] = draggableValue;
+
+                dragSrcEl.setAttribute('data-id', this.getAttribute('data-id'));
+                //dragSrcEl.style.top = this.style.top;
+                //dragSrcEl.style.left = this.style.left;
+                dragSrcEl.level = this.level;
+
+                //console.log('HANDLE DROP ENVOKES');
                 this.className = e.dataTransfer.getData('text/html');
-                //this.level = e.dataTransfer.getData('level');
-                setTimeout(these.checkLines(), 100);
+                this.setAttribute('data-id', e.dataTransfer.getData('dataId'));
+                //this.style.top = e.dataTransfer.getData('top');
+                //this.style.left = e.dataTransfer.getData('left');
+                this.level = e.dataTransfer.getData('level');
+                setTimeout(these.checkLines(), 400);
+                //setTimeout(these.checkLines(), 600);
+                //setTimeout(these.fillHoles, 550);
+                setTimeout(these.checkLines(), 800);
             }
+
 
             return false;
         }
@@ -86,12 +121,11 @@ var Game = function () {
             col.addEventListener('dragend', handleDragEnd, false);
             col.setAttribute("draggable", true);
         });
+        setTimeout(this.checkLines, 400);
 
-
-
-
-        //setTimeout(this.checkLines, 100);
     };
+
+
 
     this.releaseGameControl = function(play) {
         if (play) {
@@ -155,7 +189,7 @@ var Game = function () {
 
     this.checkLines = function (size) {
 
-        console.log('Hallo from CHECK Lines');
+        //console.log('Hallo from CHECK Lines');
 
         var k = 0,
             counter = 0,
@@ -175,8 +209,8 @@ var Game = function () {
 
         for (; k < size; k++){
             counter = counter + this.checkGemAround(this.level[k], k);
-            console.log('This level[k]  === ' + this.level[k])
-            console.log('This level K  === ' + k)
+            //console.log('This level[k]  === ' + this.level[k])
+            //console.log('This level K  === ' + k)
         }
 
         /*if (counter === this.size){
@@ -191,7 +225,7 @@ var Game = function () {
 
     this.checkGemAround = function (gemType, position) {
 
-        console.log('Hallo from check GEM AROUND');
+        //console.log('Hallo from check GEM AROUND');
         var flag = false;
 
         if (this.level[position - 1] === gemType && this.level[position + 1] === gemType
@@ -199,14 +233,14 @@ var Game = function () {
         {
             this.removeClearedGemToLevel([position, position - 1, position + 1]);
         } else {
-            console.log('Hallo FROM ELSE ===');
+            //console.log('Hallo FROM ELSE ===');
             flag = true;
         }
 
         if ( this.level[position - this.itemByLine] === gemType && this.level[position + this.itemByLine] === gemType) {
             this.removeClearedGemToLevel([position - this.itemByLine, position, position + this.itemByLine]);
         } else {
-            console.log('Hallo FROM SECOND ELSE ===');
+            //console.log('Hallo FROM SECOND ELSE ===');
             flag = true;
         }
 
@@ -215,6 +249,7 @@ var Game = function () {
         } else {
             return 0;
         }
+
     };
 
     this.removeClearedGemToLevel = function (gemsToRemove) {
@@ -235,8 +270,8 @@ var Game = function () {
         var that = this,
             difference = this.caseHeight / 2;
 
-        console.log('Hallo from ANIMATE REMOVED GEMS');
-        console.log('Hallo from ANIMATE REMOVED GEMS | THIS difference' + difference);
+        //console.log('Hallo from ANIMATE REMOVED GEMS');
+        //console.log('Hallo from ANIMATE REMOVED GEMS | THIS difference' + difference);
 
         //document.getElementById('game').style.WebkitAnimationDuration = "4s";
 
@@ -258,7 +293,7 @@ var Game = function () {
 
                     var timePassed = Date.now() - start;
 
-                    if (timePassed >= 500) {
+                    if (timePassed >= 400) {
                         clearInterval(timer);
                         return;
                     }
@@ -285,8 +320,8 @@ var Game = function () {
 
                 setTimeout(function () {
                     gem.parentNode.removeChild(gem);
-                    console.log('INSIDE A CALLBACK');
-                }, 504);
+                    //console.log('INSIDE A CALLBACK');
+                }, 510);
 
 
                 //targetGem[i].style.WebkitAnimationDuration = "4s";
@@ -300,7 +335,7 @@ var Game = function () {
             }
 
             that.scoreUpdate(10);
-            console.log('SCORE ADDED');
+            //console.log('SCORE ADDED');
 
 
         if (that.fillEnd) {
@@ -314,10 +349,10 @@ var Game = function () {
     };
 
     this.fillHoles = function(){
-        console.log('Hallo FROM FILL HOLES | Script starts here');
+        //console.log('Hallo FROM FILL HOLES | Script starts here');
 
-        console.log('');
-        console.log('');
+        //console.log('');
+        //console.log('');
 
         var i,
             counter = 0;
@@ -345,18 +380,18 @@ var Game = function () {
 
             if (this.level[under] === 0 && this.level[i] !== 0 ){
 
-                console.log('HALLO FROM FIRST IF ==================');
+                //console.log('HALLO FROM FIRST IF ==================');
 
                 if (this.level[under] === 0 && this.level[under] !== undefined){
                     this.moveGems(i, linePosition, colPosition, under);
 
-                    console.log('');
+                    /*console.log('');
                     console.log('');
 
                     console.log('CALLING MOVE GEMS');
 
                     console.log('');
-                    console.log('');
+                    console.log('');*/
                 }
 
                 break;
@@ -367,19 +402,21 @@ var Game = function () {
             }
         }
 
-        console.log('THIS FILL LEVEL LENGTH ' + this.level.length + ' == ?? ' + counter);
+        //console.log('THIS FILL LEVEL LENGTH ' + this.level.length + ' == ?? ' + counter);
 
         if (this.level.length === counter){
-            console.log('No hole left');
+            //console.log('No hole left');
             this.fillEnd = true;
             this.checkLines();
         } else {
             this.fillHoles();
         }
+
+        //this.dragOption();
     };
 
     this.moveGems = function (position, line, colPosition, destination) {
-        console.log('Hallo FROM THIS MOVE GEMS');
+        //console.log('Hallo FROM THIS MOVE GEMS');
 
         var that = this;
 
@@ -388,7 +425,7 @@ var Game = function () {
         var currentGem = this.gameField.querySelector(".row[data-id=" + "\'" + position + "\'" + "]");
 
         var currentTop = currentGem.style.top;
-        console.log('=== OLD STYLE TOP === ' + currentTop);
+        //console.log('=== OLD STYLE TOP === ' + currentTop);
 
 
         //Working gems appear
@@ -460,10 +497,12 @@ var Game = function () {
         if (line === 1){
             this.createNewRandomGem(colPosition);
         }
+
+        this.dragOption();
     };
 
     this.createNewRandomGem = function (colPosition) {
-        console.log('Hallo FROM CREATE NEW RANDOM GEMS');
+        //console.log('Hallo FROM CREATE NEW RANDOM GEMS');
 
         var that = this;
         var gem = document.createElement('div');
@@ -485,19 +524,20 @@ var Game = function () {
         gem.style.left = colPosition * this.caseHeight + 'px';
         gem.style.width = gem.style.height = this.caseHeight + 'px';
         gem.style.opacity = 0;
+        gem.setAttribute("draggable", true);
         gem.setAttribute("data-id", colPosition);
 
         this.gameField.appendChild(gem);
 
         gem.style.top = 0 + 'px';
-        gem.style.opacity = 0.2;
+        gem.style.opacity = 1;
 
     };
 
     this.scoreUpdate = function (score) {
         scoreElement = document.getElementById('scoreElement');
         this.score = Math.floor(this.score + score, 10);
-        console.log('CURRENT SCORE' + this.score);
+        //console.log('CURRENT SCORE' + this.score);
 
         scoreElement.innerHTML = this.score;
     };
