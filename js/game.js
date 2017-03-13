@@ -1,10 +1,7 @@
 var newGame;
 var Game = function () {
 
-    //var callCheckLines;
     this.init = function (size, gameField, scoreField) {
-        //console.log('Inside a Game');
-
         these = this;
         this.gameField = gameField;
         this.level = [];
@@ -17,15 +14,10 @@ var Game = function () {
         this.fillEnd = true;
         this.populateLevel();
         this.drawNewLevel();
-
         this.dragOption();
 
-        setTimeout(this.checkLines(), 500);
-
-
-        //setTimeout(this.checkLines, 100);
+        setTimeout(this.checkLines, 100);
     };
-
 
     this.dragOption = function() {
         // Experiment Drag option
@@ -33,20 +25,12 @@ var Game = function () {
 
         function handleDragStart(e) {
             this.style.opacity = '0.9';
-            //console.log('==============================');
-            // console.log('THIS LEVEL |||| ' + this.level[position]);
-
             dragSrcEl = this;
 
             e.dataTransfer.effectAllowed = 'move';
             e.dataTransfer.setData('text/html', this.className);
             e.dataTransfer.setData('level', this.level);
             e.dataTransfer.setData('dataID', this.getAttribute('data-id'));
-
-            //e.dataTransfer.setData('top', this.style.top);
-            //e.dataTransfer.setData('left', this.style.left);
-
-            //e.dataTransfer.setData('data-id', this.getAttribute("data-id"));
         }
 
         function handleDragOver(e) {
@@ -74,10 +58,8 @@ var Game = function () {
             if (dragSrcEl != this) {
                 // Set the source column's HTML to the HTML of the columnwe dropped on.
                 dragSrcEl.className = this.className;
-                //dragSrcEl.level = this.level;
                 var draggableOrderNumber = dragSrcEl.getAttribute('data-id');
                 var droppableOrderNumber = this.getAttribute('data-id');
-
                 var draggableValue = these.level[draggableOrderNumber];
                 var droppableValue = these.level[droppableOrderNumber];
 
@@ -85,23 +67,12 @@ var Game = function () {
                 these.level[droppableOrderNumber] = draggableValue;
 
                 dragSrcEl.setAttribute('data-id', this.getAttribute('data-id'));
-                //dragSrcEl.style.top = this.style.top;
-                //dragSrcEl.style.left = this.style.left;
                 dragSrcEl.level = this.level;
-
-                //console.log('HANDLE DROP ENVOKES');
                 this.className = e.dataTransfer.getData('text/html');
                 this.setAttribute('data-id', e.dataTransfer.getData('dataId'));
-                //this.style.top = e.dataTransfer.getData('top');
-                //this.style.left = e.dataTransfer.getData('left');
                 this.level = e.dataTransfer.getData('level');
-                setTimeout(these.checkLines(), 400);
-                //setTimeout(these.checkLines(), 600);
-                //setTimeout(these.fillHoles, 550);
-                setTimeout(these.checkLines(), 800);
+                these.checkLines();
             }
-
-
             return false;
         }
 
@@ -109,6 +80,7 @@ var Game = function () {
             [].forEach.call(cols, function (col) {
                 col.classList.remove('over');
             });
+            setTimeout(these.checkLines, 300);
         }
 
         var cols = document.querySelectorAll(".row");
@@ -121,11 +93,7 @@ var Game = function () {
             col.addEventListener('dragend', handleDragEnd, false);
             col.setAttribute("draggable", true);
         });
-        setTimeout(this.checkLines, 400);
-
     };
-
-
 
     this.releaseGameControl = function(play) {
         if (play) {
@@ -141,22 +109,14 @@ var Game = function () {
             fieldSize = this.size;
         for (; i < fieldSize; i++) {
             this.level[i] = Math.round(Math.random() * this.typesOfGems +1);
-            //console.log('Current gem style' + this.level[i]);
         }
     };
 
     this.drawNewLevel = function () {
-        /*console.log('Hallo from draw new level');
-        console.log('This game field height ' + this.gameField.clientHeight);
-        console.log('This original size ' + this.originalSize);*/
-
         var row = document.createElement('div');
         var lines = -1;
-
         var i = 0,
             size = this.size;
-
-        console.log('DRAW NEW LEVEL | This Size' + size);
 
         for(;i < size; i++ ) {
 
@@ -164,7 +124,6 @@ var Game = function () {
                 lines++;
             }
 
-            //console.log('Current line ' + lines);
             row.style.top = lines * this.caseHeight + 'px';
             row.style.left = i % this.originalSize * this.caseHeight + 'px';
             row.style.width = row.style.height = this.caseHeight + 'px';
@@ -174,13 +133,6 @@ var Game = function () {
             //row.setAttribute("draggable", true);
 
             this.gameField.appendChild(row.cloneNode(true));
-
-
-            /*console.log('Row style top ' + row.style.top + '|' + 'Row style left ' + row.style.left);
-            console.log('Row style width ' + row.style.width);
-            console.log('data-id ' + row.getAttribute("data-id"));
-            console.log('Class of element ' + row.getAttribute("class"));
-            console.log('ADDDDED Element ' + this.gameField.appendChild(row.cloneNode(true)));*/
         }
 
         this.lines = lines + 1;
@@ -188,44 +140,23 @@ var Game = function () {
     };
 
     this.checkLines = function (size) {
-
-        //console.log('Hallo from CHECK Lines');
-
         var k = 0,
             counter = 0,
             size = this.size;
-
-        //console.log('Hallo from CHECK Lines | This Size' + size);
 
         (function () {
             var reset = document.getElementsByClassName("row");
             for (var i=0 ; i < reset.length ; i++){
                 reset[i].classList.remove("glow");
             }
-            //console.log('Hallo from Class Glow removed');
         })();
 
-
-
         for (; k < size; k++){
-            counter = counter + this.checkGemAround(this.level[k], k);
-            //console.log('This level[k]  === ' + this.level[k])
-            //console.log('This level K  === ' + k)
+             counter = counter + this.checkGemAround(this.level[k], k);
         }
-
-        /*if (counter === this.size){
-            this.releaseGameControl(true);
-            return true;
-        } else {
-            this.releaseGameControl(false);
-            return false;
-        }*/
-
     };
 
     this.checkGemAround = function (gemType, position) {
-
-        //console.log('Hallo from check GEM AROUND');
         var flag = false;
 
         if (this.level[position - 1] === gemType && this.level[position + 1] === gemType
@@ -233,14 +164,12 @@ var Game = function () {
         {
             this.removeClearedGemToLevel([position, position - 1, position + 1]);
         } else {
-            //console.log('Hallo FROM ELSE ===');
             flag = true;
         }
 
         if ( this.level[position - this.itemByLine] === gemType && this.level[position + this.itemByLine] === gemType) {
             this.removeClearedGemToLevel([position - this.itemByLine, position, position + this.itemByLine]);
         } else {
-            //console.log('Hallo FROM SECOND ELSE ===');
             flag = true;
         }
 
@@ -249,13 +178,9 @@ var Game = function () {
         } else {
             return 0;
         }
-
     };
 
     this.removeClearedGemToLevel = function (gemsToRemove) {
-
-        //console.log('Hallo from REMOVE CLEARED GEM TO LEVEL');
-
         var i = 0,
             length = gemsToRemove.length;
 
@@ -268,28 +193,15 @@ var Game = function () {
     this.animateRemoveGems = function (position) {
 
         var that = this,
-            difference = this.caseHeight / 2;
-
-        //console.log('Hallo from ANIMATE REMOVED GEMS');
-        //console.log('Hallo from ANIMATE REMOVED GEMS | THIS difference' + difference);
-
-        //document.getElementById('game').style.WebkitAnimationDuration = "4s";
-
-        targetGem = this.gameField.querySelectorAll(".row[data-id=" + "\'" + position + "\'" + "]");
-
-
+            difference = this.caseHeight / 2,
+            targetGem = this.gameField.querySelectorAll(".row[data-id=" + "\'" + position + "\'" + "]");
 
             for (var i=0; i < targetGem.length;i++){
                 targetGem[i].setAttribute("data-id", false);
 
-                /*console.log(' TARGET GEM |||| ' + targetGem[i]);
-                console.log(' TARGET GEM || WIDTH ' + targetGem[i].style.width);*/
-
                 var gem =  targetGem[i];
-                var start = Date.now();
+                /*var start = Date.now();
                 var timer = setInterval(function() {
-
-                    //console.log(' TARGET GEM | INSIDE INTERVAL |      ========');
 
                     var timePassed = Date.now() - start;
 
@@ -298,102 +210,43 @@ var Game = function () {
                         return;
                     }
 
-                    /*console.log(' TIME PASSED ' + timePassed);
-                    console.log(' ');
-                    console.log(' TARGET GEM | INSIDE INTERVAL| WIDTH ' + gem.style.width);*/
-
                     gem.style.marginTop = gem.style.marginLeft = timePassed/20 * difference/25 + 'px';
                     gem.style.height = 125 - timePassed/20 * 5 + 'px';
                     gem.style.width = 125 - timePassed/20 * 5 + 'px' ;
 
-                    /*console.log('==========');
-                    console.log(' ');
+                }, 20);*/
 
-                    console.log(' ||| GEM MARGIN TOP ' + gem.style.marginTop);
-                    console.log(' ||| GEM MARGIN Left ' + gem.style.marginLeft);
-                    console.log(' ||| GEM HEIGHT ' + gem.style.height);
-                    console.log(' ||| GEM width ' + gem.style.width);
-
-                    console.log('==========');*/
-
-                }, 20);
-
-                setTimeout(function () {
+                //Timeout to remove a gem
+                /*setTimeout(function () {
                     gem.parentNode.removeChild(gem);
-                    //console.log('INSIDE A CALLBACK');
-                }, 510);
+                }, 200);*/
 
-
-                //targetGem[i].style.WebkitAnimationDuration = "4s";
-
-                /*targetGem[i].style.marginTop = targetGem[i].style.marginLeft = difference;
-                */
-                //
-
-
-                //targetGem[i].style.display = 'none';
+                targetGem[i].style.display = 'none';
+                gem.parentNode.removeChild(gem);
             }
-
             that.scoreUpdate(10);
-            //console.log('SCORE ADDED');
-
-
         if (that.fillEnd) {
             that.fillHoles();
         }
-        /*console.log('TARGET GEM' + targetGem);
-        targetGem.removeAttribute('data-id');
-        targetGem.style.display = 'none';
-        targetGem.style.animationDelay = "1s";*/
-
     };
 
     this.fillHoles = function(){
-        //console.log('Hallo FROM FILL HOLES | Script starts here');
-
-        //console.log('');
-        //console.log('');
-
         var i,
             counter = 0;
-
         this.releaseGameControl(false);
-
         this.fillEnd = false;
 
-        //console.log('LEVEL LENGTH | ======= ' + this.level.length);
         for(i = 0; i < this.level.length; i++){
             var under = +i + +this.originalSize;
             var linePosition = Math.floor(under / this.originalSize);
             var colPosition = under - Math.floor(linePosition * this.originalSize);
 
-
-            /*console.log('=======================');
-            //console.log('Hallo FROM FILL HOLES | ORIGINAL SIZE = ' + this.originalSize);
-            console.log('Hallo FROM FILL HOLES | VAR UNDER = ' + under);
-            console.log('Hallo FROM FILL HOLES | LINE POSITION = ' + linePosition);
-            console.log('Hallo FROM FILL HOLES | Col POSITION = ' + colPosition);
-            console.log('Hallo FROM FILL HOLES | THIS LEVEL UNDER = ' + this.level[under]);
-
-            console.log('');
-            console.log('=======================');*/
-
             if (this.level[under] === 0 && this.level[i] !== 0 ){
 
-                //console.log('HALLO FROM FIRST IF ==================');
-
                 if (this.level[under] === 0 && this.level[under] !== undefined){
-                    this.moveGems(i, linePosition, colPosition, under);
-
-                    /*console.log('');
-                    console.log('');
-
-                    console.log('CALLING MOVE GEMS');
-
-                    console.log('');
-                    console.log('');*/
+                    setTimeout((this.moveGems(i, linePosition, colPosition, under)), 50);
+                    //this.moveGems(i, linePosition, colPosition, under);
                 }
-
                 break;
             } else if (this.level[i] === 0){
                 this.createNewRandomGem(colPosition);
@@ -402,36 +255,21 @@ var Game = function () {
             }
         }
 
-        //console.log('THIS FILL LEVEL LENGTH ' + this.level.length + ' == ?? ' + counter);
-
         if (this.level.length === counter){
-            //console.log('No hole left');
             this.fillEnd = true;
             this.checkLines();
         } else {
             this.fillHoles();
         }
-
-        //this.dragOption();
     };
 
     this.moveGems = function (position, line, colPosition, destination) {
-        //console.log('Hallo FROM THIS MOVE GEMS');
-
         var that = this;
-
-        //console.log('THIS GAME FIELD FIND ===  ' + this.gameField.querySelectorAll(".row[data-id=" + "\'" + position + "\'" + "]"));
-
         var currentGem = this.gameField.querySelector(".row[data-id=" + "\'" + position + "\'" + "]");
-
-        var currentTop = currentGem.style.top;
-        //console.log('=== OLD STYLE TOP === ' + currentTop);
-
-
         //Working gems appear
-        //currentGem.style.top = Math.abs(line * that.caseHeight) + 'px';
+        currentGem.style.top = Math.abs(line * that.caseHeight) + 'px';
 
-        setTimeout( function(){
+        /*setTimeout( function(){
             return currentGem.style.top = Math.abs(line * that.caseHeight) - 125 + 'px';
         }, 50);
 
@@ -444,12 +282,8 @@ var Game = function () {
         }, 180);
 
         setTimeout( function(){
-            return currentGem.style.top = Math.abs(line * that.caseHeight) - 40 + 'px';
-        }, 200);
-
-        setTimeout( function(){
             return currentGem.style.top = Math.abs(line * that.caseHeight) + 'px';
-        }, 200);
+        }, 200);*/
 
         //Try to animate falling
 
@@ -482,13 +316,6 @@ var Game = function () {
              console.log('==========');*!/
 
         }, 20);*/
-
-
-        //console.log('Hallo FROM THIS MOVE GEMS |||| STYLE TOP ' + currentGem.style.top);
-
-        //console.log('=== NEW STYLE TOP === ' + currentGem.style.top);
-
-
         currentGem.setAttribute("data-id", destination);
 
         this.level[destination] = this.level[position];
@@ -497,29 +324,14 @@ var Game = function () {
         if (line === 1){
             this.createNewRandomGem(colPosition);
         }
-
         this.dragOption();
     };
 
     this.createNewRandomGem = function (colPosition) {
-        //console.log('Hallo FROM CREATE NEW RANDOM GEMS');
-
         var that = this;
         var gem = document.createElement('div');
-
-        //console.log('KIND OF CREATED ELEMENT' + gem);
-
         this.level[colPosition] = Math.round(Math.random() * this.typesOfGems +1);
-
         gem.className = "type-" + this.level[colPosition] + " row";
-
-        /*console.log('ADD CLASS to ' + gem.className);
-        console.log('NEW GEM ' + gem);
-
-        console.log('NEW GEM | this.caseHeight == ' + this.caseHeight);
-        console.log('NEW GEM | colPosition == ' + colPosition);*/
-
-
         gem.style.top = -this.caseHeight + 'px';
         gem.style.left = colPosition * this.caseHeight + 'px';
         gem.style.width = gem.style.height = this.caseHeight + 'px';
@@ -528,7 +340,6 @@ var Game = function () {
         gem.setAttribute("data-id", colPosition);
 
         this.gameField.appendChild(gem);
-
         gem.style.top = 0 + 'px';
         gem.style.opacity = 1;
 
@@ -537,8 +348,6 @@ var Game = function () {
     this.scoreUpdate = function (score) {
         scoreElement = document.getElementById('scoreElement');
         this.score = Math.floor(this.score + score, 10);
-        //console.log('CURRENT SCORE' + this.score);
-
         scoreElement.innerHTML = this.score;
     };
 
@@ -546,20 +355,9 @@ var Game = function () {
 
 //Game initialisation
 (function() {
-    //console.log('document loaded');
-
-    //Select active game field
     var gameField = document.getElementById("game");
-    //console.log('var game: ' + gameField);
-
-    //Select score field
     var scoreField = document.getElementById("ui");
-    //console.log('var score: ' + scoreField);
-
     buttons = document.getElementsByTagName('button');
-
-   // console.log('Buttons selected ' + buttons);
-
     (function () {
         var buttons = document.getElementsByTagName("button");
         for (var i=0; i < buttons.length;i++){
@@ -569,28 +367,9 @@ var Game = function () {
     })();
 
     function initGame() {
-        //Init game field size
         var size = this.value;
-        //console.log('value ' + size);
-
-        //Hide a message
         document.getElementById("start").style.display = 'none';
-        //console.log('Starter screen hidden');
-
         newGame = new Game();
         newGame.init(size, gameField, scoreField);
     }
-
 })();
-
-
-
-
-
-
-
-
-
-
-
-
