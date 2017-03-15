@@ -1,10 +1,7 @@
 var newGame;
 var Game = function () {
 
-    //var callCheckLines;
     this.init = function (size, gameField, scoreField) {
-        //console.log('Inside a Game');
-
         these = this;
         this.gameField = gameField;
         this.level = [];
@@ -17,15 +14,12 @@ var Game = function () {
         this.fillEnd = true;
         this.populateLevel();
         this.drawNewLevel();
-
         this.dragOption();
 
         setTimeout(this.checkLines(), 500);
 
-
         //setTimeout(this.checkLines, 100);
     };
-
 
     this.dragOption = function() {
         // Experiment Drag option
@@ -79,15 +73,13 @@ var Game = function () {
                 dragSrcEl.setAttribute('data-id', draggableOrderNumber);
                 this.setAttribute('data-id', droppableOrderNumber);
                 //dragSrcEl.level = this.level;
-                
+
                 this.className = e.dataTransfer.getData('dragStartClass');
                 //this.setAttribute('data-id', e.dataTransfer.getData('dataId'));
 
                 //this.level = e.dataTransfer.getData('level');
                 setTimeout(these.checkLines(), 300);
-
             }
-
 
             return false;
         }
@@ -111,8 +103,6 @@ var Game = function () {
         setTimeout(this.checkLines, 400);
 
     };
-
-
 
     this.releaseGameControl = function(play) {
         if (play) {
@@ -491,23 +481,12 @@ var Game = function () {
     };
 
     this.createNewRandomGem = function (colPosition) {
-        //console.log('Hallo FROM CREATE NEW RANDOM GEMS');
-
         var that = this;
         var gem = document.createElement('div');
-
-        //console.log('KIND OF CREATED ELEMENT' + gem);
 
         this.level[colPosition] = Math.round(Math.random() * this.typesOfGems +1);
 
         gem.className = "type-" + this.level[colPosition] + " row";
-
-        /*console.log('ADD CLASS to ' + gem.className);
-        console.log('NEW GEM ' + gem);
-
-        console.log('NEW GEM | this.caseHeight == ' + this.caseHeight);
-        console.log('NEW GEM | colPosition == ' + colPosition);*/
-
 
         gem.style.top = -this.caseHeight + 'px';
         gem.style.left = colPosition * this.caseHeight + 'px';
@@ -515,13 +494,10 @@ var Game = function () {
         gem.style.opacity = 0;
         //gem.setAttribute("draggable", true);
         gem.setAttribute("data-id", colPosition);
-
         this.gameField.appendChild(gem);
 
         gem.style.top = 0 + 'px';
-        gem.style.opacity = 0.5;
-
-
+        gem.style.opacity = 1;
 
     };
 
@@ -529,27 +505,21 @@ var Game = function () {
         scoreElement = document.getElementById('scoreElement');
         this.score = Math.floor(this.score + score, 10);
         //console.log('CURRENT SCORE' + this.score);
-
         scoreElement.innerHTML = this.score;
+
+        if(this.score > 249){
+            document.getElementById("game").innerHTML = ' ';
+            document.getElementById("victory").style.visibility = 'visible';
+        }
     };
 
 };
 
 //Game initialisation
 (function() {
-    //console.log('document loaded');
-
-    //Select active game field
     var gameField = document.getElementById("game");
-    //console.log('var game: ' + gameField);
-
-    //Select score field
     var scoreField = document.getElementById("ui");
-    //console.log('var score: ' + scoreField);
-
     buttons = document.getElementsByTagName('button');
-
-   // console.log('Buttons selected ' + buttons);
 
     (function () {
         var buttons = document.getElementsByTagName("button");
@@ -560,28 +530,10 @@ var Game = function () {
     })();
 
     function initGame() {
-        //Init game field size
         var size = this.value;
-        //console.log('value ' + size);
-
-        //Hide a message
         document.getElementById("start").style.display = 'none';
-        //console.log('Starter screen hidden');
-
         newGame = new Game();
         newGame.init(size, gameField, scoreField);
     }
 
 })();
-
-
-
-
-
-
-
-
-
-
-
-
